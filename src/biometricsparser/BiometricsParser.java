@@ -23,7 +23,9 @@
  */
 package biometricsparser;
 
+import chatservice.MqttChatService;
 import com.fazecast.jSerialComm.SerialPort;
+import com.google.gson.Gson;
 
 public class BiometricsParser {
 
@@ -32,12 +34,16 @@ public class BiometricsParser {
      */
     
     public static void main(String[] args) {
+        Gson gson = new Gson();
+	MqttChatService chatService = new MqttChatService();
+        
         SerialPort tty;
         try {
             tty = SerialPort.getCommPorts()[0];
         }
         catch (ArrayIndexOutOfBoundsException e) {
             System.out.println("No device attatched");
+	    //TODO: Close program
             return;
         }
         tty.setBaudRate(115200);
@@ -51,11 +57,14 @@ public class BiometricsParser {
                 byte[] readBuffer = new byte[tty.bytesAvailable()];
                 tty.readBytes(readBuffer, readBuffer.length);
                 String message = new String(readBuffer);
-                System.out.println(message);
+		
                 BiometricData biometricData = null;
                 try {biometricData = Parser.parse(message);}
                 catch (Exception e) {}
-                System.out.println(biometricData);
+		
+		String jsonMessage = gson.toJson(biometricData);
+                System.out.println(jsonMessage);
+		chatService.sendMessage(jsonMessage);
             }
         } catch (InterruptedException e) {
             e.printStackTrace();
