@@ -24,8 +24,6 @@
 package biometricsparser;
 
 import com.fazecast.jSerialComm.SerialPort;
-import com.fazecast.jSerialComm.SerialPortDataListener;
-import com.fazecast.jSerialComm.SerialPortEvent;
 
 public class BiometricsParser {
 
@@ -34,36 +32,37 @@ public class BiometricsParser {
      */
     
     public static void main(String[] args) {
-        
-        //Example
-        BiometricData example = Parser.parse("[20;9;2;-9.81;80.5;]");
-        BiometricData badExample = Parser.parse("20;9;2;-9.81;80.5;]");
-        System.out.println("Good example: " + example);
-        System.out.println("Bad example: " + badExample);
-        
-        SerialPort tty = SerialPort.getCommPorts()[0];
+        SerialPort tty;
+        try {
+            tty = SerialPort.getCommPorts()[0];
+        }
+        catch (ArrayIndexOutOfBoundsException e) {
+            System.out.println("No device attatched");
+            return;
+        }
         tty.setBaudRate(115200);
-        
         tty.openPort();
-        tty.addDataListener(new SerialPortDataListener() {
-            
-            private final int MAX_BYTES = 64;
-            
-            @Override
-            public int getListeningEvents() {
-                return SerialPort.LISTENING_EVENT_DATA_AVAILABLE;
-            }
-
-            @Override
-            public void serialEvent(SerialPortEvent event) {
-                if (event.getEventType() != SerialPort.LISTENING_EVENT_DATA_AVAILABLE) {
-                    return;
+        
+        try {
+            while (true) {
+                while (tty.bytesAvailable() == 0) {
+                    Thread.sleep(1000);
                 }
-                
-                BiometricData biometricData = Parser.parse(String.valueOf(event.getReceivedData()));
+                byte[] readBuffer = new byte[tty.bytesAvailable()];
+                tty.readBytes(readBuffer, readBuffer.length);
+                String message = new String(readBuffer);
+                System.out.println(message);
+                BiometricData biometricData = null;
+                try {biometricData = Parser.parse(message);}
+                catch (Exception e) {}
                 System.out.println(biometricData);
             }
-        });
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (NegativeArraySizeException e) {
+            System.out.println("Device detached");
+        } 
+        tty.closePort();        
     }
     
 }

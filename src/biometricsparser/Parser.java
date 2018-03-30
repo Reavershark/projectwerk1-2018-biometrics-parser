@@ -25,9 +25,9 @@ package biometricsparser;
 
 public class Parser {
 
-    private static final char START_OF_TRANSMISSION = '[';
-    private static final char SEPARATOR = ';';
-    private static final char END_OF_TRANSMISSION = ']';
+    private static final char START_OF_TRANSMISSION = '{';
+    private static final char SEPARATOR = ',';
+    private static final char END_OF_TRANSMISSION = '}';
 
     public static BiometricData parse(String input) {
         if (!isValid(input)) {
