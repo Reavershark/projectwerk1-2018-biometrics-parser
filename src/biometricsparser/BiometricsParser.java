@@ -31,27 +31,20 @@ public class BiometricsParser {
 
     private Gson gson = new Gson();
     private MqttChatService chatService = new MqttChatService();
+    private SerialPort tty;
 
     private int baudRate = 115200;
-    private int deviceSleepTime = 100;
+    private int deviceSleepTime = 1000;
     private int readSleepTime = 1000;
     private int minimumBytes = 25;
     
-    public static void main(String[] args) {
+    public BiometricsParser() {
         
-        SerialPort tty;
-        while (SerialPort.getCommPorts() == null) {
-            System.out.println("No device attatched, waiting for device");
-            try {Thread.sleep(deviceSleepTime);}
-            catch (InterruptedExeption e) {}
-        }
-        tty = SerialPort.getCommPorts()[0];
-        tty.setBaudRate(baudRate);
-        tty.openPort();
+        initialize();
         
         try {
             while (true) {
-                while (tty.bytesAvailable() < 25) {
+                while (tty.bytesAvailable() < minimumBytes) {
                     Thread.sleep(readSleepTime);
                 }
                 String message = readMessage();
@@ -60,21 +53,34 @@ public class BiometricsParser {
                 try {biometricData = Parser.parse(message);}
                 catch (Exception e) {}
 
-                String jsonMessage = gson.toJson(biometricData);
-                System.out.println(jsonMessage);
-                chatService.sendMessage(jsonMessage);
+                sendMessage(biometricData);
             }
         } catch (InterruptedException e) {
             e.printStackTrace();
-        } catch (NegativeArraySizeException e) {
-            System.out.println("Device detached");
-        } 
-        tty.closePort();        
+        }
+        tty.closePort();
+    }
+    
+    private void initialize() {
+        while (SerialPort.getCommPorts().length == 0) {
+            System.out.println("No device attatched, waiting for device");
+            try {Thread.sleep(deviceSleepTime);}
+            catch (InterruptedException e) {}
+        }
+        tty = SerialPort.getCommPorts()[0];
+        tty.setBaudRate(baudRate);
+        tty.openPort();
     }
 
     private String readMessage() {
         byte[] readBuffer = new byte[tty.bytesAvailable()];
         tty.readBytes(readBuffer, readBuffer.length);
         return new String(readBuffer);
+    }
+    
+    private void sendMessage(BiometricData biometricData) {
+        String jsonMessage = gson.toJson(biometricData);
+        System.out.println(jsonMessage);
+        chatService.sendMessage(jsonMessage);
     }
 }
