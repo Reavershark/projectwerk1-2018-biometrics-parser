@@ -27,11 +27,6 @@ import com.fazecast.jSerialComm.SerialPort;
 import com.fazecast.jSerialComm.SerialPortDataListener;
 import com.fazecast.jSerialComm.SerialPortEvent;
 
-/**
- *
- * @author jonas
- */
-
 public class BiometricsParser {
 
     /**
@@ -39,7 +34,13 @@ public class BiometricsParser {
      */
     
     public static void main(String[] args) {
-        // TODO code application logic here
+        
+        //Example
+        BiometricData example = Parser.parse("[20;9;2;-9.81;80.5;]");
+        BiometricData badExample = Parser.parse("20;9;2;-9.81;80.5;]");
+        System.out.println("Good example: " + example);
+        System.out.println("Bad example: " + badExample);
+        
         SerialPort tty = SerialPort.getCommPorts()[0];
         tty.setBaudRate(115200);
         
@@ -59,10 +60,8 @@ public class BiometricsParser {
                     return;
                 }
                 
-                byte[] newData = new byte[MAX_BYTES];
-                char[] message = new char[MAX_BYTES];
-                
-                System.out.println(event.getReceivedData());
+                BiometricData biometricData = Parser.parse(String.valueOf(event.getReceivedData()));
+                System.out.println(biometricData);
             }
         });
     }

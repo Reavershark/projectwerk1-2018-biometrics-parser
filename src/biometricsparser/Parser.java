@@ -24,9 +24,32 @@
 package biometricsparser;
 
 public class Parser {
-    /*
-    public static biometricData parse() {
-       
+
+    private static final char START_OF_TRANSMISSION = '[';
+    private static final char SEPARATOR = ';';
+    private static final char END_OF_TRANSMISSION = ']';
+
+    public static BiometricData parse(String input) {
+        if (!isValid(input)) {
+             return null;
+        }
+
+        int previousSeparator = 0;
+        double[] values = new double[5];
+
+        for (int i = 0; i < 5; i++) {
+            values[i] = Double.parseDouble(input.substring(previousSeparator + 1, input.indexOf(SEPARATOR, previousSeparator + 1 )));
+            previousSeparator = input.indexOf(SEPARATOR, previousSeparator + 1 );
+        }
+
+        return new BiometricData(values[0], new Acceleration(values[1], values[2], values[3]), values[4]);
     }
-    */
+
+    public static boolean isValid(String input) {
+        return input.indexOf(START_OF_TRANSMISSION) != -1 &&
+            input.indexOf(SEPARATOR) != -1 &&
+            input.indexOf(END_OF_TRANSMISSION) != -1 &&
+            input.indexOf(START_OF_TRANSMISSION) < input.indexOf(SEPARATOR) &&
+            input.indexOf(SEPARATOR) < input.indexOf(END_OF_TRANSMISSION);
+    }
 }

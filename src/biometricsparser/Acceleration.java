@@ -24,14 +24,15 @@
 package biometricsparser;
 
 public class Acceleration {
+
     private double accelX;
     private double accelY;
     private double accelZ;
     
     public Acceleration(double accelX, double accelY, double accelZ) {
         this.accelX = accelX;
-        this.accelX = accelY;
-        this.accelX = accelZ;
+        this.accelY = accelY;
+        this.accelZ = accelZ;
     }
     
     public double getAccelX() {
@@ -44,5 +45,10 @@ public class Acceleration {
     
     public double getAccelZ() {
         return accelZ;
+    }
+
+    @Override
+    public String toString() {
+        return "{X: " + accelX + ", Y: " + accelY + ", Z: " + accelZ + "}";
     }
 }

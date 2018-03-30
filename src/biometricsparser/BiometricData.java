@@ -23,16 +23,32 @@
  */
 package biometricsparser;
 
-class biometricData {
+class BiometricData {
     
     private double temperature;
-    private Acceleration accel;
-    private double heartRateBpm;
+    private Acceleration acceleration;
+    private double heartRate;
     
-    public biometricData(double temperature, Acceleration accel, double heartRateBpm) {
+    public BiometricData(double temperature, Acceleration acceleration, double heartRate) {
         this.temperature = temperature;
-        this.accel = accel;
-        this.heartRateBpm = heartRateBpm;
+        this.acceleration = acceleration;
+        this.heartRate = heartRate;
     }
     
+    public double getTemperature() {
+        return temperature;
+    }
+
+    public Acceleration getAcceleration() {
+        return acceleration;
+    }
+
+    public double getHeartRate() {
+        return heartRate;
+    }
+
+    @Override
+    public String toString() {
+        return "{Temperature: " + temperature + ", Acceleration: " + acceleration + ", Heart rate: " + heartRate + "}";
+    }
 }
