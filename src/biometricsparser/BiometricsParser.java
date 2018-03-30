@@ -29,42 +29,40 @@ import com.google.gson.Gson;
 
 public class BiometricsParser {
 
-    /**
-     * @param args the command line arguments
-     */
+    private Gson gson = new Gson();
+    private MqttChatService chatService = new MqttChatService();
+
+    private int baudRate = 115200;
+    private int deviceSleepTime = 100;
+    private int readSleepTime = 1000;
+    private int minimumBytes = 25;
     
     public static void main(String[] args) {
-        Gson gson = new Gson();
-	MqttChatService chatService = new MqttChatService();
         
         SerialPort tty;
-        try {
-            tty = SerialPort.getCommPorts()[0];
+        while (SerialPort.getCommPorts() == null) {
+            System.out.println("No device attatched, waiting for device");
+            try {Thread.sleep(deviceSleepTime);}
+            catch (InterruptedExeption e) {}
         }
-        catch (ArrayIndexOutOfBoundsException e) {
-            System.out.println("No device attatched");
-	    //TODO: Close program
-            return;
-        }
-        tty.setBaudRate(115200);
+        tty = SerialPort.getCommPorts()[0];
+        tty.setBaudRate(baudRate);
         tty.openPort();
         
         try {
             while (true) {
-                while (tty.bytesAvailable() == 0) {
-                    Thread.sleep(1000);
+                while (tty.bytesAvailable() < 25) {
+                    Thread.sleep(readSleepTime);
                 }
-                byte[] readBuffer = new byte[tty.bytesAvailable()];
-                tty.readBytes(readBuffer, readBuffer.length);
-                String message = new String(readBuffer);
-		
+                String message = readMessage();
+
                 BiometricData biometricData = null;
                 try {biometricData = Parser.parse(message);}
                 catch (Exception e) {}
-		
-		String jsonMessage = gson.toJson(biometricData);
+
+                String jsonMessage = gson.toJson(biometricData);
                 System.out.println(jsonMessage);
-		chatService.sendMessage(jsonMessage);
+                chatService.sendMessage(jsonMessage);
             }
         } catch (InterruptedException e) {
             e.printStackTrace();
@@ -73,5 +71,10 @@ public class BiometricsParser {
         } 
         tty.closePort();        
     }
-    
+
+    private String readMessage() {
+        byte[] readBuffer = new byte[tty.bytesAvailable()];
+        tty.readBytes(readBuffer, readBuffer.length);
+        return new String(readBuffer);
+    }
 }
