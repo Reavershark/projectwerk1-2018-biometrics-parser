@@ -34,8 +34,8 @@ public class BiometricsParser {
     private SerialPort tty;
 
     private int baudRate = 115200;
-    private int deviceSleepTime = 1000;
-    private int readSleepTime = 1000;
+    private int deviceSleepTime = 500;
+    private int readSleepTime = 500;
     private int minimumBytes = 25;
     
     public BiometricsParser() {
