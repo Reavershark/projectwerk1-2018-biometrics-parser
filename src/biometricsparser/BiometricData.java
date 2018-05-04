@@ -24,17 +24,18 @@
 package biometricsparser;
 
 class BiometricData {
-    
+
+    private String name;
     private double temperature;
     private Acceleration acceleration;
     private double heartRate;
-    
+
     public BiometricData(double temperature, Acceleration acceleration, double heartRate) {
         this.temperature = temperature;
         this.acceleration = acceleration;
         this.heartRate = heartRate;
     }
-    
+
     public double getTemperature() {
         return temperature;
     }
@@ -47,6 +48,7 @@ class BiometricData {
         return heartRate;
     }
 
+    //Do not use for data exchange
     @Override
     public String toString() {
         return "{Temperature: " + temperature + ", Acceleration: " + acceleration + ", Heart rate: " + heartRate + "}";
