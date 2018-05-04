@@ -23,20 +23,22 @@
  */
 package biometricsparser;
 
-import chatservice.MqttChatService;
+import chatservice.MqttService;
 import com.fazecast.jSerialComm.SerialPort;
 import com.google.gson.Gson;
 
 public class BiometricsParser {
 
     private Gson gson = new Gson();
-    private MqttChatService chatService = new MqttChatService();
+    private MqttService chatService = new MqttService();
     private SerialPort tty;
 
     private int baudRate = 115200;
     private int deviceSleepTime = 500;
     private int readSleepTime = 500;
     private int minimumBytes = 25;
+    
+    private String name = "Old Station";
     
     public BiometricsParser() {
         
@@ -50,7 +52,7 @@ public class BiometricsParser {
                 String message = readMessage();
 
                 BiometricData biometricData = null;
-                try {biometricData = Parser.parse(message);}
+                try {biometricData = Parser.parse(message, name);}
                 catch (Exception e) {}
 
                 sendMessage(biometricData);

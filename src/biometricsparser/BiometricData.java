@@ -30,7 +30,8 @@ class BiometricData {
     private Acceleration acceleration;
     private double heartRate;
 
-    public BiometricData(double temperature, Acceleration acceleration, double heartRate) {
+    public BiometricData(String name, double temperature, Acceleration acceleration, double heartRate) {
+        this.name = name;
         this.temperature = temperature;
         this.acceleration = acceleration;
         this.heartRate = heartRate;
@@ -46,6 +47,10 @@ class BiometricData {
 
     public double getHeartRate() {
         return heartRate;
+    }
+    
+    public String getName() {
+        return name;
     }
 
     //Do not use for data exchange

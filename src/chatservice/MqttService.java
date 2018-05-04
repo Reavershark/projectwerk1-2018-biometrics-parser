@@ -12,7 +12,7 @@ import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
 
-public class MqttChatService implements MqttCallback {
+public class MqttService implements MqttCallback {
     private MqttClient client;
     private String broker = "tcp://labict.be:1883";
     private String clientId;
@@ -29,7 +29,7 @@ public class MqttChatService implements MqttCallback {
     private String channelName;
     private String channelTopic;
     
-    public MqttChatService(String clientId, String channelName) {
+    public MqttService(String clientId, String channelName) {
         Random random = new Random();
         this.clientId = clientId + random.nextInt();
         this.channelName = channelName;
@@ -37,7 +37,7 @@ public class MqttChatService implements MqttCallback {
         setupMqtt();
     }
     
-    public MqttChatService() {
+    public MqttService() {
         this("guest", "general");
     }
     
@@ -68,7 +68,7 @@ public class MqttChatService implements MqttCallback {
             this.channelTopic = BASE_TOPIC + "/" + this.channelName;
             client.subscribe(channelTopic);
         } catch (MqttException ex) {
-            Logger.getLogger(MqttChatService.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(MqttService.class.getName()).log(Level.SEVERE, null, ex);
         }
 
     }
@@ -79,7 +79,7 @@ public class MqttChatService implements MqttCallback {
             mqttMessage.setQos(qos);
             client.publish(channelTopic, mqttMessage);
         } catch (MqttException ex) {
-            Logger.getLogger(MqttChatService.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(MqttService.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
     
@@ -92,7 +92,7 @@ public class MqttChatService implements MqttCallback {
             client.disconnect();
             client.close();
         } catch (MqttException ex) {
-            Logger.getLogger(MqttChatService.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(MqttService.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 

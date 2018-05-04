@@ -29,7 +29,7 @@ public class Parser {
     private static final char SEPARATOR = ',';
     private static final char END_OF_TRANSMISSION = '}';
 
-    public static BiometricData parse(String input) {
+    public static BiometricData parse(String input, String name) {
         if (!isValid(input)) {
              return null;
         }
@@ -42,7 +42,7 @@ public class Parser {
             previousSeparator = input.indexOf(SEPARATOR, previousSeparator + 1 );
         }
 
-        return new BiometricData(values[0], new Acceleration(values[1], values[2], values[3]), values[4]);
+        return new BiometricData(name, values[0], new Acceleration(values[1], values[2], values[3]), values[4]);
     }
 
     public static boolean isValid(String input) {
