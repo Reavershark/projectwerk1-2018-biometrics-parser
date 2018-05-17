@@ -55,7 +55,9 @@ public class BiometricsParser {
                 try {biometricData = Parser.parse(message, name);}
                 catch (Exception e) {}
 
-                sendMessage(biometricData);
+                if (biometricData != null){
+                    sendMessage(biometricData);
+                }
             }
         } catch (InterruptedException e) {
             e.printStackTrace();
