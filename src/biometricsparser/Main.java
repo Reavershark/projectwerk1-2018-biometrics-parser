@@ -25,6 +25,6 @@ package biometricsparser;
 
 public class Main {
     public static void main(String[] args) {
-        new BiometricsParser();
+        new BiometricsParser(args);
     }
 }

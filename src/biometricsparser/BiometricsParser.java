@@ -38,11 +38,11 @@ public class BiometricsParser {
     private int readSleepTime = 500;
     private int minimumBytes = 25;
     
-    private String name = "Old Station";
+    private String name = "Station";
     
-    public BiometricsParser() {
+    public BiometricsParser(String[] args) {
         
-        initialize();
+        initialize(args);
         
         try {
             while (true) {
@@ -65,7 +65,10 @@ public class BiometricsParser {
         tty.closePort();
     }
     
-    private void initialize() {
+    private void initialize(String[] args) {
+        if (args.length == 1) {
+            name = args[0];
+        }
         while (SerialPort.getCommPorts().length == 0) {
             System.out.println("No device attatched, waiting for device");
             try {Thread.sleep(deviceSleepTime);}
